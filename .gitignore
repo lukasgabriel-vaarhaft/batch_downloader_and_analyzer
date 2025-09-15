@@ -47,8 +47,11 @@ categorys/
 data/
 old_csv/
 csv_real_gen/
-*.csv
 reports/*.csv
+
+# Include small example CSV files but exclude large ones
+*.csv
+!downloader/to_download/*_example.csv
 
 # Configuration files with API keys
 config.yaml

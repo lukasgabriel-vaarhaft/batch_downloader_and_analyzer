@@ -33,7 +33,11 @@ The pipeline consists of four main components:
 ```
 batch_downloader_and_analyzer/
 ├── downloader/                 # 📥 S3 Download Module
-│   ├── download.py                 # Professional downloader with resume & progress
+│   ├── batch_download.py           # Smart batch downloader with auto-configuration
+│   ├── download.py                 # Manual downloader with full control
+│   ├── to_download/                # Drop CSV files here for auto-processing
+│   │   ├── GEN_example.csv         # Example GEN dataset file list
+│   │   └── REAL_example.csv        # Example REAL dataset file list
 │   └── README.md                   # Detailed downloader documentation
 ├── scripts/                    # 🔧 Core Processing Scripts
 │   ├── generate_descriptions.py    # AI-powered image description generation
@@ -56,7 +60,31 @@ batch_downloader_and_analyzer/
 └── GEN/                     # Generated image dataset
 ```
 
-## 🛠️ Quick Setup
+## ⚡ Quick Start
+
+### 🚀 Try the Examples
+
+Get started immediately with the included example datasets:
+
+```bash
+# Clone and setup
+git clone git@github.com:lukasgabriel-vaarhaft/batch_downloader_and_analyzer.git
+cd batch_downloader_and_analyzer
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+
+# Copy config template and add your Gemini API key
+cp config.yaml.example config.yaml
+# Edit config.yaml with your API key
+
+# Run the interactive batch downloader
+cd downloader
+python batch_download.py
+
+# Select files to download and watch the magic happen!
+```
+
+## 🛠️ Detailed Setup
 
 ### Prerequisites
 
@@ -100,29 +128,38 @@ batch_downloader_and_analyzer/
 
 ### Step 1: Download Images from S3
 
-The professional downloader provides intelligent analysis before downloading:
+#### 🎯 Smart Batch Download (Recommended)
+
+The easiest way to get started - just drop your CSV files and let the system auto-configure everything:
 
 ```bash
-# Interactive download with pre-analysis
+# Interactive batch download with file selection
+cd downloader
+python batch_download.py
+
+# This will:
+# 1. 🔍 Find all CSV files in to_download/ folder
+# 2. 🎛️  Let you select which ones to process
+# 3. 🤖 Auto-configure S3 paths based on filenames
+# 4. 📊 Show detailed analysis for each dataset
+# 5. 📥 Download with progress tracking
+```
+
+**Auto-Configuration Examples:**
+- `GEN_experiment.csv` → Downloads to `downloads/GEN_experiment_downloads/`
+- `REAL_validation.csv` → Downloads to `downloads/REAL_validation_downloads/`
+
+#### 🔧 Manual Download (Advanced)
+
+For full control over paths and configuration:
+
+```bash
+# Manual configuration
 python downloader/download.py \
   --csv-file your_image_list.csv \
   --output-dir LOCAL_IMAGES \
   --s3-prefix "your-s3-folder/"
-
-# Automated download for scripts/CI
-python downloader/download.py \
-  --csv-file your_image_list.csv \
-  --output-dir LOCAL_IMAGES \
-  --s3-prefix "your-s3-folder/" \
-  --auto-confirm
 ```
-
-**What happens:**
-1. 🔍 Scans S3 bucket and builds file map
-2. 📊 Shows detailed availability analysis  
-3. ❓ Asks for confirmation (unless `--auto-confirm`)
-4. 📥 Downloads with real-time progress bar
-5. 💾 Saves state for resumability
 
 **Smart Download Features:**
 - 🔍 **Pre-download Analysis** - Scans S3 and shows detailed statistics before starting

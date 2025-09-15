@@ -36,15 +36,27 @@ Professional S3 image downloading tool with advanced features for data labeling 
 
 ## Quick Start
 
+### Auto-Configured Batch Download (Recommended)
+
 ```bash
-# Basic download with confirmation
+# Process all CSV files in to_download/ folder automatically
+python downloader/batch_download.py
+
+# Process specific CSV file with auto-configuration
+python downloader/batch_download.py --csv-file to_download/GEN_test.csv
+
+# Automated batch processing (no prompts)
+python downloader/batch_download.py --auto-confirm
+```
+
+### Manual Download (Advanced)
+
+```bash
+# Manual configuration with full control
 python downloader/download.py --csv-file data.csv --output-dir images/ --s3-prefix "my-folder/"
 
 # Automated download for scripts
 python downloader/download.py --csv-file data.csv --output-dir images/ --s3-prefix "my-folder/" --auto-confirm
-
-# Custom S3 bucket
-python downloader/download.py --csv-file data.csv --output-dir images/ --s3-prefix "folder/" --bucket my-bucket
 ```
 
 ## Directory Structure Created
@@ -147,7 +159,28 @@ This downloader integrates seamlessly with the main data labeling pipeline:
 3. **Categorize** with `scripts/categorize_descriptions.py`
 4. **Analyze** with visualization scripts
 
+## Auto-Configuration Magic
+
+The batch downloader automatically configures everything based on your CSV filename:
+
+| CSV Filename | Dataset Type | S3 Prefix | Output Directory |
+|--------------|--------------|-----------|------------------|
+| `GEN_test.csv` | GEN | `datalake_training/GEN/` | `downloads/GEN_test_downloads/` |
+| `REAL_test.csv` | REAL | `datalake_training/REAL/` | `downloads/REAL_test_downloads/` |
+| `custom_data.csv` | CUSTOM | `datalake_training/CUSTOM/` | `downloads/custom_data_downloads/` |
+
+### Workflow
+
+1. **📁 Drop CSV files** into `to_download/` folder
+2. **🚀 Run batch downloader** - it detects everything automatically
+3. **📊 Review analysis** - see what's available vs missing
+4. **✅ Confirm or auto-proceed** - start the download process
+5. **📈 Monitor progress** - real-time progress bar with file names
+6. **🔄 Resume anytime** - stop/start seamlessly
+
 ## Files in this Directory
 
-- `download.py` - Complete download script with all features
+- `batch_download.py` - Smart batch downloader with auto-configuration
+- `download.py` - Manual download script with full control
+- `to_download/` - Drop your CSV files here for auto-processing
 - `README.md` - This documentation
